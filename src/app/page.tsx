@@ -1,113 +1,141 @@
-import Image from "next/image";
+import Container from "@/components/Container";
+import Button from "@/components/Button";
+import ProductCard, { ProductCardData } from "@/components/ProductCard";
 
-export default function Home() {
+const categories = [
+  { name: "Books", emoji: "📚" },
+  { name: "Notes", emoji: "📝" },
+  { name: "Electronics", emoji: "💻" },
+  { name: "Gadgets", emoji: "🎧" },
+  { name: "Stationery", emoji: "✏️" },
+  { name: "Other", emoji: "📦" },
+];
+
+async function getFeaturedProducts(): Promise<ProductCardData[]> {
+  try {
+    const base = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const res = await fetch(`${base}/api/products?limit=4&sort=newest`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return (data.products ?? []) as ProductCardData[];
+  } catch {
+    return [];
+  }
+}
+
+export default async function Home() {
+  const featured = await getFeaturedProducts();
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <div className="flex flex-col">
+      <section className="border-b border-slate-200 bg-white">
+        <Container className="flex flex-col items-center gap-8 py-20 text-center sm:py-28">
+          <span className="rounded-full bg-blue-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-blue-700">
+            Campus-only marketplace
+          </span>
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+          <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
+            Buy and sell on campus with{" "}
+            <span className="text-blue-600">CampusCart</span>
+          </h1>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
+          <p className="max-w-2xl text-lg text-slate-600">
+            A simple, secure marketplace for students to trade books, notes,
+            gadgets, and more — right inside your college.
           </p>
-        </a>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Button href="/marketplace" size="lg">
+              Browse Marketplace
+            </Button>
+            <Button href="/sell" variant="secondary" size="lg">
+              Start Selling
+            </Button>
+          </div>
+        </Container>
+      </section>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
+      <section className="border-b border-slate-200 bg-slate-50">
+        <Container className="py-14">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-slate-900">
+              Browse by category
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Find exactly what you need, fast.
+            </p>
+          </div>
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {categories.map((category) => (
+              <a
+                key={category.name}
+                href={`/marketplace?category=${category.name}`}
+                className="flex flex-col items-center gap-2 rounded-xl border border-slate-200 bg-white p-5 text-center transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-sm"
+              >
+                <span className="text-2xl">{category.emoji}</span>
+                <span className="text-sm font-medium text-slate-700">
+                  {category.name}
+                </span>
+              </a>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="bg-white">
+        <Container className="py-16">
+          <div className="mb-8 flex items-end justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900">
+                Fresh on CampusCart
+              </h2>
+              <p className="mt-1 text-sm text-slate-500">
+                Recently listed items from students near you.
+              </p>
+            </div>
+            <Button href="/marketplace" variant="ghost" size="sm">
+              View all →
+            </Button>
+          </div>
+
+          {featured.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 py-16 text-center">
+              <p className="text-slate-500">
+                No products listed yet. Be the first to sell something!
+              </p>
+              <div className="mt-4">
+                <Button href="/sell" size="sm">
+                  List an Item
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {featured.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
+        </Container>
+      </section>
+
+      <section className="border-t border-slate-200 bg-slate-900">
+        <Container className="flex flex-col items-center gap-6 py-16 text-center">
+          <h2 className="text-3xl font-bold text-white sm:text-4xl">
+            Have something to sell?
           </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
+          <p className="max-w-xl text-slate-300">
+            Turn your unused books, notes, and gadgets into cash. List an item
+            in under a minute.
           </p>
-        </a>
-      </div>
-    </main>
+          <Button href="/sell" size="lg">
+            List an Item
+          </Button>
+        </Container>
+      </section>
+    </div>
   );
 }

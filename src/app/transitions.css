@@ -1,0 +1,128 @@
+/* Transitions.dev — Tooltip open/close (CampusCart) */
+
+:root {
+  --tt-in-dur: 140ms;
+  --tt-out-dur: 60ms;
+  --tt-scale: 0.96;
+  --tt-delay: 120ms;
+  --tt-in-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --tt-out-ease: ease-out;
+  --tt-move-dur: 180ms;
+  --tt-move-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --tt-bg: #0f172a;
+  --tt-fg: #f8fafc;
+}
+
+.t-tt-group {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.t-tt {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0;
+  overflow: hidden;
+  translate: var(--tt-x, 0px) 0;
+  scale: var(--tt-scale);
+  transform-origin: 50% 0%;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--tt-bg);
+  color: var(--tt-fg);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  box-shadow:
+    0 0 0 1px rgba(15, 23, 42, 0.06),
+    0 4px 12px rgba(15, 23, 42, 0.14),
+    0 12px 40px rgba(15, 23, 42, 0.1);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 60;
+  transition:
+    opacity   var(--tt-out-dur) var(--tt-out-ease),
+    scale     var(--tt-out-dur) var(--tt-out-ease),
+    translate var(--tt-move-dur) var(--tt-move-ease),
+    width     var(--tt-move-dur) var(--tt-move-ease);
+}
+
+.t-tt::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 8px;
+  height: 8px;
+  background: var(--tt-bg);
+  border-radius: 1px;
+}
+
+.t-tt[data-show="true"] {
+  opacity: 1;
+  scale: 1;
+  transition:
+    opacity   var(--tt-in-dur) var(--tt-in-ease) var(--tt-delay),
+    scale     var(--tt-in-dur) var(--tt-in-ease) var(--tt-delay),
+    translate var(--tt-move-dur) var(--tt-move-ease),
+    width     var(--tt-move-dur) var(--tt-move-ease);
+}
+
+.t-tt-text {
+  white-space: nowrap;
+}
+
+/* Icon buttons inside the tooltip group */
+.tt-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  width: 36px;
+  border-radius: 10px;
+  color: #334155;
+  background: transparent;
+  border: 1px solid transparent;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+.tt-icon-btn:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.tt-icon-btn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.tt-icon-btn:active {
+  transform: scale(0.96);
+}
+
+/* Thin divider between navigation and icon group */
+.nav-divider {
+  width: 1px;
+  height: 20px;
+  background-color: #e2e8f0;
+  margin: 0 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-tt,
+  .tt-icon-btn {
+    transition: none !important;
+  }
+}
