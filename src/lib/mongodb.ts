@@ -5,12 +5,14 @@ import mongoose from "mongoose";
 // using the system DNS. Forcing Cloudflare/Google DNS fixes it.
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
-const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI) {
-  throw new Error(
-    "MONGODB_URI is missing. Add it to .env.local in the project root."
-  );
+function getMongoUri() {
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    throw new Error(
+      "MONGODB_URI is missing. Configure it in Vercel project environment variables."
+    );
+  }
+  return uri;
 }
 
 type MongooseCache = {
@@ -36,7 +38,7 @@ export async function connectToDatabase() {
   if (cached.conn) return cached.conn;
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI as string, {
+    cached.promise = mongoose.connect(getMongoUri(), {
       bufferCommands: false,
       serverSelectionTimeoutMS: 10000,
     });

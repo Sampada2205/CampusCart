@@ -1,11 +1,27 @@
 import Stripe from "stripe";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error(
-    "STRIPE_SECRET_KEY is missing. Add it to .env.local in the project root."
-  );
+let stripeInstance: Stripe | undefined;
+
+function getStripe() {
+  if (stripeInstance) {
+    return stripeInstance;
+  }
+
+  const secretKey = process.env.STRIPE_SECRET_KEY;
+  if (!secretKey) {
+    throw new Error(
+      "STRIPE_SECRET_KEY is missing. Configure it in Vercel project environment variables."
+    );
+  }
+
+  stripeInstance = new Stripe(secretKey, {
+    apiVersion: "2024-06-20",
+  });
+  return stripeInstance;
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-06-20",
+export const stripe = new Proxy({} as Stripe, {
+  get(_target, property, receiver) {
+    return Reflect.get(getStripe(), property, receiver);
+  },
 });
