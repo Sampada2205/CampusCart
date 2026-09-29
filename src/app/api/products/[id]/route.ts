@@ -42,7 +42,8 @@ export async function GET(
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    const seller = product.seller as unknown as {
+    const typedProduct = product as any;
+    const seller = (product as unknown as { seller?: unknown }).seller as {
       _id?: string;
       name?: string;
       college?: string;
@@ -51,17 +52,17 @@ export async function GET(
 
     return NextResponse.json({
       product: {
-        id: product._id.toString(),
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        category: product.category,
-        condition: product.condition,
-        images: product.images,
-        college: product.college,
-        location: product.location,
-        status: product.status,
-        createdAt: product.createdAt,
+        id: typedProduct._id.toString(),
+        title: typedProduct.title,
+        description: typedProduct.description,
+        price: typedProduct.price,
+        category: typedProduct.category,
+        condition: typedProduct.condition,
+        images: typedProduct.images,
+        college: typedProduct.college,
+        location: typedProduct.location,
+        status: typedProduct.status,
+        createdAt: typedProduct.createdAt,
         seller: seller
           ? {
               id: seller._id?.toString() ?? "",

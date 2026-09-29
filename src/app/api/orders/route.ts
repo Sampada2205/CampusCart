@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
       } | null;
 
       return {
-        id: o._id.toString(),
+        id: (o._id as unknown as { toString(): string }).toString(),
         amount: o.amount,
         currency: o.currency,
         status: o.status,

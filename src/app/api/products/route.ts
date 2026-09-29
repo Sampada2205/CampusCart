@@ -32,11 +32,11 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    if (category && PRODUCT_CATEGORIES.includes(category)) {
+    if (category && PRODUCT_CATEGORIES.includes(category as (typeof PRODUCT_CATEGORIES)[number])) {
       query.category = category;
     }
 
-    if (condition && PRODUCT_CONDITIONS.includes(condition)) {
+    if (condition && PRODUCT_CONDITIONS.includes(condition as (typeof PRODUCT_CONDITIONS)[number])) {
       query.condition = condition;
     }
 
@@ -69,7 +69,7 @@ export async function GET(req: NextRequest) {
       };
 
       return {
-        id: p._id.toString(),
+        id: (p._id as unknown as { toString(): string }).toString(),
         title: p.title,
         description: p.description,
         price: p.price,
@@ -138,10 +138,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!PRODUCT_CATEGORIES.includes(category)) {
+    if (!PRODUCT_CATEGORIES.includes(category as (typeof PRODUCT_CATEGORIES)[number])) {
       return NextResponse.json({ error: "Invalid category" }, { status: 400 });
     }
-    if (!PRODUCT_CONDITIONS.includes(condition)) {
+    if (!PRODUCT_CONDITIONS.includes(condition as (typeof PRODUCT_CONDITIONS)[number])) {
       return NextResponse.json({ error: "Invalid condition" }, { status: 400 });
     }
     if (price < 0) {

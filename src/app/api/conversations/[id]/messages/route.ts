@@ -33,10 +33,14 @@ export async function GET(
       return NextResponse.json({ error: "Invalid conversation id" }, { status: 400 });
     }
 
-    const conversation = await Conversation.findById(params.id)
+    const conversation = (await Conversation.findById(params.id)
       .populate("participants", "name college profileImage")
       .populate("product", "title price images status")
-      .lean();
+      .lean()) as unknown as {
+      _id: mongoose.Types.ObjectId;
+      participants: Array<{ _id: mongoose.Types.ObjectId }>;
+      product: unknown;
+    } | null;
 
     if (!conversation) {
       return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
@@ -49,9 +53,14 @@ export async function GET(
       return NextResponse.json({ error: "Not allowed" }, { status: 403 });
     }
 
-    const messages = await Message.find({ conversation: conversation._id })
+    const messages = (await Message.find({ conversation: conversation._id })
       .sort({ createdAt: 1 })
-      .lean();
+      .lean()) as unknown as Array<{
+      _id: mongoose.Types.ObjectId;
+      text: string;
+      sender: mongoose.Types.ObjectId;
+      createdAt: Date;
+    }>;
 
     const parts = conversation.participants as unknown as Array<{
       _id: mongoose.Types.ObjectId;
@@ -137,7 +146,7 @@ export async function POST(
     }
 
     const isParticipant = conversation.participants.some(
-      (p) => p.toString() === user._id.toString()
+      (p: mongoose.Types.ObjectId) => p.toString() === user._id.toString()
     );
     if (!isParticipant) {
       return NextResponse.json({ error: "Not allowed" }, { status: 403 });

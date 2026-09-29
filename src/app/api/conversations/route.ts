@@ -84,12 +84,25 @@ export async function GET(req: NextRequest) {
       if (!mongoose.Types.ObjectId.isValid(otherId)) continue;
       const otherDoc = await User.findById(otherId).lean();
       if (!otherDoc) continue;
+      const typedOtherDoc = otherDoc as unknown as {
+        _id: mongoose.Types.ObjectId;
+        name?: string;
+        college?: string;
+        profileImage?: string;
+      };
 
       // 4. Look up the product
       const productId = safeId(c.product);
       if (!productId || !mongoose.Types.ObjectId.isValid(productId)) continue;
       const productDoc = await Product.findById(productId).lean();
       if (!productDoc) continue;
+      const typedProductDoc = productDoc as unknown as {
+        _id: mongoose.Types.ObjectId;
+        title?: string;
+        price?: number;
+        images?: string[];
+        status?: string;
+      };
 
       // 5. Unread count — handle Map, plain object, or missing
       let unread = 0;
@@ -101,23 +114,23 @@ export async function GET(req: NextRequest) {
       }
 
       conversations.push({
-        id: c._id.toString(),
+        id: (c._id as mongoose.Types.ObjectId).toString(),
         otherUser: {
-          id: (otherDoc._id as mongoose.Types.ObjectId).toString(),
-          name: otherDoc.name ?? "Student",
-          college: otherDoc.college ?? "",
-          profileImage: otherDoc.profileImage ?? "",
+          id: (typedOtherDoc._id as mongoose.Types.ObjectId).toString(),
+          name: typedOtherDoc.name ?? "Student",
+          college: typedOtherDoc.college ?? "",
+          profileImage: typedOtherDoc.profileImage ?? "",
         },
         product: {
-          id: (productDoc._id as mongoose.Types.ObjectId).toString(),
-          title: productDoc.title ?? "Product",
+          id: (typedProductDoc._id as mongoose.Types.ObjectId).toString(),
+          title: typedProductDoc.title ?? "Product",
           price:
-            typeof productDoc.price === "number" ? productDoc.price : 0,
+            typeof typedProductDoc.price === "number" ? typedProductDoc.price : 0,
           image:
-            Array.isArray(productDoc.images) && productDoc.images[0]
-              ? productDoc.images[0]
+            Array.isArray(typedProductDoc.images) && typedProductDoc.images[0]
+              ? typedProductDoc.images[0]
               : "",
-          status: productDoc.status ?? "available",
+          status: typedProductDoc.status ?? "available",
         },
         lastMessage: c.lastMessage ?? "",
         lastMessageAt: (c.lastMessageAt ?? c.createdAt ?? new Date()).toString(),
@@ -215,7 +228,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     const isParticipant = conversation.participants.some(
-      (p) => p && p.toString() === user._id.toString()
+      (p: mongoose.Types.ObjectId) => p && p.toString() === user._id.toString()
     );
     if (!isParticipant) {
       return NextResponse.json({ error: "Not allowed" }, { status: 403 });

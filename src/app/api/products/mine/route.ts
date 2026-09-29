@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
       .lean();
 
     const serialized = products.map((p) => ({
-      id: p._id.toString(),
+      id: (p._id as unknown as { toString(): string }).toString(),
       title: p.title,
       description: p.description,
       price: p.price,
