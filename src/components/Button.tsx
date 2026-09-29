@@ -11,21 +11,12 @@ type BaseProps = {
   className?: string;
 };
 
-type ButtonAsButton = BaseProps & {
-  href?: undefined;
-  type?: "button" | "submit" | "reset";
+type ButtonProps = BaseProps & {
+  href?: string;
+  type?: React.ButtonHTMLAttributes<HTMLButtonElement>["type"];
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   disabled?: boolean;
 };
-
-type ButtonAsLink = BaseProps & {
-  href: string;
-  type?: undefined;
-  onClick?: undefined;
-  disabled?: undefined;
-};
-
-type ButtonProps = ButtonAsButton | ButtonAsLink;
 
 const variantStyles: Record<Variant, string> = {
   primary:

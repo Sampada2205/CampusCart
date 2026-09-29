@@ -142,7 +142,7 @@ function DashboardInner() {
 
           {!listingsLoading && !listingsError && listings.length === 0 && (
             <div className="rounded-xl border border-dashed border-slate-300 bg-white py-20 text-center">
-              <p className="text-slate-500">You haven't listed anything yet.</p>
+              <p className="text-slate-500">You haven&apos;t listed anything yet.</p>
               <div className="mt-4">
                 <Button href="/sell" size="sm">
                   Sell your first item
